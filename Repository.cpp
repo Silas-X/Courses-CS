@@ -55,3 +55,8 @@ int popGoods(int code, Repository*& repos) {
   repos->totalGoodsInRepository--;
   return 0;
 }
+
+// Auxiliary
+GoodsType*& find(int code, Repository*& repos) {
+  
+}
