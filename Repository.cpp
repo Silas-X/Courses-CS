@@ -1,62 +1,87 @@
-// TODO::1. Create A find fucntion to locate a goods.
+// TODO::1. Create A find function to locate a goods.
 
 #include "Repository.hpp"
+#include <iostream>
+#include <string>
+using namespace std;
 
-int create(Repository** repos, bool enforce = false) {
-  if (*repos == NULL || enforce) {
-    if (*repos != NULL)
-      destroy(
-          repos,
-          true);  // if repos is not empty and force to create, overwrite it.
-    *repos = new Repository;
-    (*repos)->totalGoodsInRepository = 0;
-    (*repos)->goodsList = NULL;
+// Repository Functions
+int CreateRepos(Repository*& repos) {
+  // exception here
+  if (repos == NULL) {
+    repos = new Repository;
+    InitRepos(repos);  // Init Repository
     return 0;
   }
-  return 001;  // TODO:001 for failure to create a repos;
+  return -1;
 }
 
-int destroy(Repository** repos, bool enforce = false) {
-  if (*repos == NULL) {
-    return 002;  // TODO:002 for failure to delete, it is empty;
+int Destroyed(Repository*& repos) {
+  // exceptions here
+  if (repos != NULL) {
+    delete repos;
+    return 0;
   }
-  delete *repos;
+  return -1;
+}
+
+int Import(Repository*& repos) {
+  // exceptions here;
+  cout << "请输入商品唯一标识符" << endl;
+  int code;
+  cin >> code;
+  GoodsType*& newGoods = Find(code, repos);
+  if (newGoods == NULL) {
+    ImportNewItems(repos, code, newGoods);
+  }
+  ModifyRepos(repos, newGoods, 1);  // TODO: need Update;
+  showInfo(newGoods);
   return 0;
 }
 
-int pushGoods(const int code, const string name, Repository** repos) {
-  if ((*repos)->totalGoodsInRepository == 0) {
-    (*repos)->goodsList = new GoodsType;
-  }
-  // createAGoodsType;
-  GoodsType* newGoods = new GoodsType;
-  newGoods->code = code;
-  newGoods->Name = name;
-  updateInfo(newGoods, true);  // update in and out info.
+int ImportNewItems(Repository*& repos, int code, GoodsType*& target) {
+  // exceptions here;
+  //  cout << "商品标识码:  " << code << endl;
+  cout << "请输入商品基本信息" << endl;
+  target->code = code;
+  cout << "请输入商品名称" << endl;
+  string name;
+  getline(cin, name);
+  target->name = name;
+  // cout << "商品名称为:  " << name << endl;
+  target->remainCount = 0;
+}
 
-  //// Insert in the head of the list;
-  newGoods->nextGoods = (*repos)->goodsList;
-  (*repos)->goodsList->nextGoods = newGoods;
+int UpdateINfo() {}
+
+// Modification functions
+int Modify() {}
+
+int ModifyRepos(Repository*& repos, GoodsType*& target, int opt) {}
+
+// Goods Functions
+
+inline int IncreaseStorage(GoodsType*& target, int number) {
+  target->remainCount += number;
   return 0;
 }
 
-int popGoods(int code, Repository*& repos) {
-  GoodsType*& target = find(code, repos);
-  if (target == NULL) {
-    return 102;  // TODO:102 for pop failure, since ther is no match item;
-  }
-
-  if (target->remainCount == 1) {
-    deleteGoods(target);
-  } else {
-    target->remainCount--;
-    updateInfo(target, false);
-  }
-  repos->totalGoodsInRepository--;
+inline int decreaseStorage(GoodsType*& target, int number) {
+  target->remainCount -= number;
   return 0;
 }
 
-// Auxiliary
-GoodsType*& find(int code, Repository*& repos) {
-  
+inline int ChangeStorage(GoodsType*& target, int number) {
+  target->remainCount = number;
+  return 0;
+}
+
+inline int ChangeGoodsName(GoodsType*& target, const string name) {
+  target->name = name;
+  return 0;
+}
+
+inline int ChangeGoodsCode(GoodsType*& target, const int code) {
+  target->code = code;
+  return 0;
 }

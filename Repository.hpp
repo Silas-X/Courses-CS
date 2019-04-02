@@ -16,18 +16,16 @@ struct ModifyRecords {
 
 struct GoodsType {
   int code;         // Serial Numbers,eg
-  string Name;      // goods Name;
+  string name;      // goods Name;
   int remainCount;  // status of a goods
-  ModifyRecords* records;
-  GoodsType* nextGoods;
 };
 
-struct users {};
+struct UsersType {};
 
 struct Repository {
-  GoodsType* goodsList;
-  int totalGoodsInRepository;
-  users* userInfo;
+  struct Info;
+  struct GoodsType* goodsList;
+  // struct UsersType* uersList;
 };
 
 #endif Repository_HEADDER_INCLUDE
