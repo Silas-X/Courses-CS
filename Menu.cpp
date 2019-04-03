@@ -73,7 +73,7 @@ int ReposMenu(Repository*& repos) {
         break;
       case 3:
         cout << "显示全部商品信息" << endl;
-        p = repos->goodsList;
+        p = repos->goodsList->next;
         while (p != NULL) {
           ShowInfo(p);
           cout << endl;

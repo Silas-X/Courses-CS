@@ -43,14 +43,16 @@ int InitRepos(Repository*& repos);
 int CreateRepos(Repository*& repos);
 int Destroyed(Repository*& repos);
 int Import(Repository*& repos);
-int ImportNewItems(Repository*& repos, int code, GoodsType*& target);
 int UpdateInfo();
+int InitGoods(GoodsType*& target, int code, string name, int remainNumber);
+int CreateGoods(int code, GoodsType*& target);
 inline int IncreaseStorage(GoodsType*& target, int number);
 inline int decreaseStorage(GoodsType*& target, int number);
 inline int ChangeStorage(GoodsType*& target, int number);
 inline int ChangeGoodsName(GoodsType*& target, const string name);
 inline int ChangeGoodsCode(GoodsType*& target, const int code);
 int ShowInfo(GoodsType*& target);
-int InsertNewItems(Repository*&, GoodsType*&);
+int InsertNewItems(GoodsType*& head, GoodsType*& goods);
+GoodsType* Find(int target, GoodsType*& goodsHead);
 
 #endif  // Repository_HEADDER_INCLUDE

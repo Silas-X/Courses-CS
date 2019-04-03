@@ -16,6 +16,13 @@ int ShowRepos(Repository*& repos) {
   return 0;
 }
 
+int InitGoods(GoodsType*& target, int code, string name, int remainNumber) {
+  target->code = code;
+  target->name = name;
+  target->next = NULL;
+  target->remainCount = remainNumber;
+  return 0;
+}
 int InitRepos(Repository*& repos) {
   cout << "请输入仓库基本信息" << endl << endl;
   cout << "请输入仓库代码" << endl;
@@ -29,7 +36,8 @@ int InitRepos(Repository*& repos) {
   //;
   getline(cin, name);
   repos->info.name = name;
-  repos->goodsList = NULL;
+  repos->goodsList = new GoodsType;
+  InitGoods(repos->goodsList, -1, "_RESERVED", 0);
   repos->next = NULL;
   return 0;
 }
@@ -67,31 +75,39 @@ int Import(Repository*& repos) {
   cout << "请输入商品唯一标识符" << endl;
   int code;
   cin >> code;
-  GoodsType* newGoods = NULL /*= Find(code, repos)*/;
-  if (newGoods == NULL) {
+  GoodsType* newGoods = Find(code, repos->goodsList);
+  if (newGoods->next == NULL || newGoods->next->code != code) {
+    cout << "商品不存在，新建商品" << endl;
     newGoods = new GoodsType;
-    ImportNewItems(repos, code, newGoods);
-    InsertNewItems(repos, newGoods);
+    CreateGoods(code, newGoods);
+    InsertNewItems(repos->goodsList, newGoods);
+
+  } else {
+    newGoods =newGoods->next;
+    cout << "商品已存在，信息如下" << endl;
+    ShowInfo(newGoods);
+    cout << "请输入入库数量" << endl;
+    int nums;
+    cin >> nums;
+    IncreaseStorage(newGoods, nums);
   }
-  IncreaseStorage(newGoods, 1);
   // ModifyRepos(repos, newGoods, 1);  // TODO: need Update;
-  ShowInfo(newGoods);
   return 0;
 }
 
-int ImportNewItems(Repository*& repos, int code, GoodsType*& target) {
+int CreateGoods(int code, GoodsType*& target) {
   // exceptions here;
   //  cout << "商品标识码:  " << code << endl;
   cout << "请输入商品基本信息" << endl;
-  target->code = code;
   cout << "请输入商品名称" << endl;
   string name;
   getchar();
   getline(cin, name);
-  target->name = name;
   // cout << "商品名称为:  " << name << endl;
-  target->remainCount = 0;
-  target->next = NULL;
+  cout << "请输入入库商品数量" << endl;
+  int remainNumber;
+  cin >> remainNumber;
+  InitGoods(target, code, name, remainNumber);
   return 0;
 }
 
@@ -103,10 +119,10 @@ int ImportNewItems(Repository*& repos, int code, GoodsType*& target) {
 // int ModifyRepos(Repository*& repos, GoodsType*& target, int opt) { return 0;
 // }
 
-int InsertNewItems(Repository*& repos, GoodsType*& goods) {
+int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
   // Insert at the head of the single linked list;
-  goods->next = repos->goodsList;
-  repos->goodsList = goods;
+  goods->next = head->next;
+  head->next = goods;
   return 0;
 }
 
@@ -144,5 +160,12 @@ int ShowInfo(GoodsType*& target) {
   return 0;
 }
 
-
+GoodsType* Find(int target, GoodsType*& goodsHead) {
+  GoodsType *q = goodsHead, *p = q->next;
+  while (p != NULL && p->code != target) {
+    q = p;
+    p = p->next;
+  }
+  return q;
+}
 #endif
