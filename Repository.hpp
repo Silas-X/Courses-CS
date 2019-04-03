@@ -18,14 +18,39 @@ struct GoodsType {
   int code;         // Serial Numbers,eg
   string name;      // goods Name;
   int remainCount;  // status of a goods
+  GoodsType* next;
 };
 
 struct UsersType {};
 
+struct Info {
+  string name;
+  int series;
+};
 struct Repository {
-  struct Info;
-  struct GoodsType* goodsList;
-  // struct UsersType* uersList;
+  Info info;
+  GoodsType* goodsList;
+  Repository* next;
+  // struct UsersType* usersList;
 };
 
-#endif Repository_HEADDER_INCLUDE
+struct Company {
+  Repository* reposList;
+  int totalNums;
+};
+int ShowRepos(Repository*& repos);
+int InitRepos(Repository*& repos);
+int CreateRepos(Repository*& repos);
+int Destroyed(Repository*& repos);
+int Import(Repository*& repos);
+int ImportNewItems(Repository*& repos, int code, GoodsType*& target);
+int UpdateInfo();
+inline int IncreaseStorage(GoodsType*& target, int number);
+inline int decreaseStorage(GoodsType*& target, int number);
+inline int ChangeStorage(GoodsType*& target, int number);
+inline int ChangeGoodsName(GoodsType*& target, const string name);
+inline int ChangeGoodsCode(GoodsType*& target, const int code);
+int ShowInfo(GoodsType*& target);
+int InsertNewItems(Repository*&, GoodsType*&);
+
+#endif  // Repository_HEADDER_INCLUDE
