@@ -8,7 +8,10 @@ using namespace std;
 
 // Repository Functions
 int ShowRepos(Repository*& repos) {
-  if (repos == NULL) return -1;
+  if (repos == NULL) {
+    cout << "无仓库" << endl;
+    return -1;
+  }
   Info reposInfo = repos->info;
   cout << "仓库代码:  " << reposInfo.series << endl;
   cout << "仓库名称:  " << reposInfo.name << endl;
@@ -83,7 +86,7 @@ int Import(Repository*& repos) {
     InsertNewItems(repos->goodsList, newGoods);
 
   } else {
-    newGoods =newGoods->next;
+    newGoods = newGoods->next;
     cout << "商品已存在，信息如下" << endl;
     ShowInfo(newGoods);
     cout << "请输入入库数量" << endl;
@@ -95,6 +98,29 @@ int Import(Repository*& repos) {
   return 0;
 }
 
+int Export(Repository*& repos) {
+  cout << "请输入商品唯一标识符" << endl;
+  int code;
+  cin >> code;
+  GoodsType* newGoods = Find(code, repos->goodsList);
+  if (newGoods->next == NULL || newGoods->next->code != code) {
+    cout << "商品不存在，请确认" << endl;
+    system("Pause");
+  } else {
+    cout << "商品已存在，信息如下" << endl;
+    ShowInfo(newGoods->next);
+    cout << "请输入出库数量" << endl;
+    int nums;
+    cin >> nums;
+    DecreaseStorage(newGoods->next, nums);
+
+    if (newGoods->next->remainCount == 0)
+      RemoveGoods(newGoods, newGoods->next);
+    else
+      ShowInfo(newGoods->next);
+  }
+  return 0;
+}
 int CreateGoods(int code, GoodsType*& target) {
   // exceptions here;
   //  cout << "商品标识码:  " << code << endl;
@@ -111,13 +137,14 @@ int CreateGoods(int code, GoodsType*& target) {
   return 0;
 }
 
-// int UpdateINfo() {}
-
-// Modification functions
-// int Modify() {}
-
-// int ModifyRepos(Repository*& repos, GoodsType*& target, int opt) { return 0;
-// }
+int RemoveGoods(GoodsType*& pre, GoodsType*& target) {
+  cout << "删除库存记录" << endl;
+  ShowInfo(target);
+  if (target == NULL) return -1;
+  pre->next = target->next;
+  delete target;
+  return 0;
+}
 
 int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
   // Insert at the head of the single linked list;
@@ -129,16 +156,23 @@ int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
 // Goods Functions
 
 inline int IncreaseStorage(GoodsType*& target, int number) {
+  // TODO::need Exception, in case of positive,and NULL
   target->remainCount += number;
   return 0;
 }
 
-inline int decreaseStorage(GoodsType*& target, int number) {
+inline int DecreaseStorage(GoodsType*& target, int number) {
+  // TODO::need Exception, in case of positive,and NULL
+  if (number > target->remainCount) {
+    cout << "超过库存量，无效的操作" << endl;
+    return -1;
+  }
   target->remainCount -= number;
   return 0;
 }
 
 inline int ChangeStorage(GoodsType*& target, int number) {
+  // TODO::need Exception, in case of non-positive,and NULL
   target->remainCount = number;
   return 0;
 }

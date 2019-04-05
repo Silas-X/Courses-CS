@@ -46,6 +46,10 @@ int MainMenu() {
 }
 
 int ReposMenu(Repository*& repos) {
+  if (repos == NULL) {
+    cout << "仓库不存在" << endl;
+    return -1;
+  }
   cout << "欢迎！当前仓库为" << endl;
   ShowRepos(repos);
   cout << "请选择将要执行的操作" << endl;
@@ -68,7 +72,8 @@ int ReposMenu(Repository*& repos) {
         break;
       case 2:
         cout << "出货" << endl;
-        cout << "TODO in progress" << endl;  // TODO: 出货函数
+        // cout << "TODO in progress" << endl;  // TODO: 出货函数
+        Export(repos);
         system("PAUSE");
         break;
       case 3:
