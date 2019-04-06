@@ -5,12 +5,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include "Repository_FILE.cpp"
+#include "Repository_FILE.hpp"
 using namespace std;
 
 // Repository Functions
 int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
-  //  writeOffRepos(fstream reposData, repos);
-  //  writeOffGoods(fstream goodsData, repos);
+  if (repos == NULL) return -1;
   cout << "写出数据" << endl;
   reposData.close();
   goodsData.close();
@@ -28,31 +29,6 @@ int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
   while (p != NULL) {
     goodsData << p->code << endl << p->name << endl << p->remainCount << endl;
     p = p->next;
-  }
-  return 0;
-}
-
-int writeOffLog(ofstream& reposLog, int opt, GoodsType*& target,
-                int changes = 0) {
-  reposLog.close();
-  reposLog.open("repos.log", ios_base::out);
-  if (target == NULL) {
-    cout << "Error" << endl;
-    system("PAUSE");
-  }
-  switch (opt) {
-    case 0:
-      reposLog << "删除商品" << target->code << " " << target->name << endl;
-      break;
-    case 1:
-      reposLog << "商品" << target->code << " " << target->name << "入库"
-               << changes << "件"
-               << "原有" << target->remainCount << "现存"
-               << target->remainCount + changes << endl;
-      break;
-
-    case 2:
-      break;
   }
   return 0;
 }
@@ -77,24 +53,6 @@ int InitGoods(GoodsType*& target, int code, string name, int remainNumber) {
   return 0;
 }
 
-int InitRepos(fstream& is, Repository*& repos) {
-  cout << "请输入仓库基本信息" << endl << endl;
-  cout << "请输入仓库代码" << endl;
-  int code;
-  is >> code;
-  repos->info.series = code;
-  cout << "请输入仓库名称" << endl;
-  string name;
-  is.get();
-  // while (getchar() == '\n')
-  //;
-  getline(is, name);
-  repos->info.name = name;
-  repos->goodsList = new GoodsType;
-  InitGoods(repos->goodsList, -1, "_RESERVED", 0);
-  repos->next = NULL;
-  return 0;
-}
 int InitRepos(istream& is, Repository*& repos) {
   cout << "请输入仓库基本信息" << endl << endl;
   cout << "请输入仓库代码" << endl;
@@ -112,16 +70,6 @@ int InitRepos(istream& is, Repository*& repos) {
   InitGoods(repos->goodsList, -1, "_RESERVED", 0);
   repos->next = NULL;
   return 0;
-}
-
-int CreateRepos(fstream& is, Repository*& repos) {
-  // exception here
-  if (repos == NULL) {
-    repos = new Repository;
-    InitRepos(is, repos);  // Init Repository
-    return 0;
-  }
-  return -1;
 }
 
 int CreateRepos(istream& is, Repository*& repos) {
@@ -153,32 +101,6 @@ int Destroyed(Repository*& repos) {
   return -1;
 }
 
-int Import(fstream& is, Repository*& repos) {
-  // exceptions here;
-  if (!is.is_open()) return -1;
-  if (is.eof()) return -2;
-  cout << "请输入商品唯一标识符" << endl;
-  int code;
-  is >> code;
-  GoodsType* newGoods = Find(code, repos->goodsList);
-  if (newGoods->next == NULL || newGoods->next->code != code) {
-    cout << "商品不存在，新建商品" << endl;
-    newGoods = new GoodsType;
-    CreateGoods(is, code, newGoods);
-    InsertNewItems(repos->goodsList, newGoods);
-
-  } else {
-    newGoods = newGoods->next;
-    cout << "商品已存在，信息如下" << endl;
-    ShowInfo(newGoods);
-    cout << "请输入入库数量" << endl;
-    int nums;
-    is >> nums;
-    IncreaseStorage(newGoods, nums);
-  }
-  // ModifyRepos(repos, newGoods, 1);  // TODO: need Update;
-  return 0;
-}
 int Import(istream& is, Repository*& repos) {
   // exceptions here;
   cout << "请输入商品唯一标识符" << endl;
@@ -227,6 +149,7 @@ int Export(Repository*& repos) {
   }
   return 0;
 }
+
 int CreateGoods(int code, GoodsType*& target) {
   // exceptions here;
   //  cout << "商品标识码:  " << code << endl;
@@ -244,29 +167,14 @@ int CreateGoods(int code, GoodsType*& target) {
   return 0;
 }
 
-int CreateGoods(fstream& is, int code, GoodsType*& target) {
-  // exceptions here;
-  //  cout << "商品标识码:  " << code << endl;
-  cout << "请输入商品基本信息" << endl;
-  cout << "请输入商品名称" << endl;
-  string name;
-  is.get();
-  getline(is, name);
-  // cout << "商品名称为:  " << name << endl;
-  cout << "请输入入库商品数量" << endl;
-  int remainNumber;
-  is >> remainNumber;
-  InitGoods(target, code, name, remainNumber);
-  writeOffLog(reposLog, 1, target, 0);
-  return 0;
-}
-
 int RemoveGoods(GoodsType*& pre, GoodsType*& target) {
+  writeOffLog(reposLog, 0, target);
   cout << "删除库存记录" << endl;
   ShowInfo(target);
   if (target == NULL) return -1;
-  pre->next = target->next;
-  delete target;
+  GoodsType* p = target;
+  target = target->next;
+  delete p;
   return 0;
 }
 
@@ -281,7 +189,9 @@ int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
 
 inline int IncreaseStorage(GoodsType*& target, int number) {
   // TODO::need Exception, in case of positive,and NULL
+  writeOffLog(reposLog, 2, target, number);
   target->remainCount += number;
+
   return 0;
 }
 
@@ -291,12 +201,14 @@ inline int DecreaseStorage(GoodsType*& target, int number) {
     cout << "超过库存量，无效的操作" << endl;
     return -1;
   }
+  writeOffLog(reposLog, 2, target, -number);
   target->remainCount -= number;
   return 0;
 }
 
 inline int ChangeStorage(GoodsType*& target, int number) {
   // TODO::need Exception, in case of non-positive,and NULL
+  writeOffLog(reposLog, 2, target, target->remainCount - number);
   target->remainCount = number;
   return 0;
 }
