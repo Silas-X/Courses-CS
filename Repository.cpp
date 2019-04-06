@@ -32,6 +32,31 @@ int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
   return 0;
 }
 
+int writeOffLog(ofstream& reposLog, int opt, GoodsType*& target,
+                int changes = 0) {
+  reposLog.close();
+  reposLog.open("repos.log", ios_base::out);
+  if (target == NULL) {
+    cout << "Error" << endl;
+    system("PAUSE");
+  }
+  switch (opt) {
+    case 0:
+      reposLog << "删除商品" << target->code << " " << target->name << endl;
+      break;
+    case 1:
+      reposLog << "商品" << target->code << " " << target->name << "入库"
+               << changes << "件"
+               << "原有" << target->remainCount << "现存"
+               << target->remainCount + changes << endl;
+      break;
+
+    case 2:
+      break;
+  }
+  return 0;
+}
+
 int ShowRepos(Repository*& repos) {
   if (repos == NULL) {
     cout << "无仓库" << endl;
@@ -215,6 +240,7 @@ int CreateGoods(int code, GoodsType*& target) {
   int remainNumber;
   cin >> remainNumber;
   InitGoods(target, code, name, remainNumber);
+  writeOffLog(reposLog, 1, target, 0);
   return 0;
 }
 
@@ -231,6 +257,7 @@ int CreateGoods(fstream& is, int code, GoodsType*& target) {
   int remainNumber;
   is >> remainNumber;
   InitGoods(target, code, name, remainNumber);
+  writeOffLog(reposLog, 1, target, 0);
   return 0;
 }
 
