@@ -15,9 +15,10 @@ int MainMenu() {
   int opt = 0;
   // Company* rootCorp = new Company;
   Repository* root = NULL;
-  if (!reposData.is_open()) cout << "OpenFailed" << endl;
-  CreateRepos(reposData, root);
-  // reposData.close();
+  if (!reposData.is_open())
+    cout << "OpenFailed" << endl;
+  else
+    CreateRepos(reposData, root);
   if (goodsData.is_open()) {
     cout << "¶ÁÈ¡´æµµ" << endl;
     system("PAUSE");
