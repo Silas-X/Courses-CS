@@ -9,26 +9,30 @@ using namespace std;
 
 // reposData.close();
 // ifstream reposData("Data_repos.txt");
+
 int MainMenu() {
-  {
-    ofstream reposData;
-    reposData.open("Data_repos.txt");
-    reposData << 1 << endl;
-    reposData << "Silas" << endl;
-    reposData.close();
-  }
-  ifstream reposData("Data_repos.txt");
   cout << "商品管理系统" << endl;
   int opt = 0;
   // Company* rootCorp = new Company;
   Repository* root = NULL;
   if (!reposData.is_open()) cout << "OpenFailed" << endl;
   CreateRepos(reposData, root);
+  // reposData.close();
+  if (goodsData.is_open()) {
+    cout << "读取存档" << endl;
+    system("PAUSE");
+    while (Import(goodsData, root) == 0)
+      ;
+  } else {
+    cout << "Not Open" << endl;
+    system("PAUSE");
+  }
   while (1) {
     ShowInstruments();
     cin >> opt;
     switch (opt) {
       case 0:
+        writeOff(reposData, goodsData, root);
         ShowRepos(root);
         cout << "销毁仓库" << endl;  // TODO:深度销毁仓库
         Destroyed(root);

@@ -8,6 +8,20 @@
 using namespace std;
 
 // Repository Functions
+int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
+  //  writeOffRepos(fstream reposData, repos);
+  //  writeOffGoods(fstream goodsData, repos);
+  reposData << repos->info.series << endl;
+  reposData << repos->info.name << endl;
+  GoodsType* p = repos->goodsList->next;
+  while (p != NULL) {
+    goodsData << p->code << endl << p->name << endl << p->remainCount << endl;
+    goodsData << endl;
+    p = p->next;
+  }
+  return 0;
+}
+
 int ShowRepos(Repository*& repos) {
   if (repos == NULL) {
     cout << "无仓库" << endl;
@@ -28,7 +42,7 @@ int InitGoods(GoodsType*& target, int code, string name, int remainNumber) {
   return 0;
 }
 
-int InitRepos(ifstream& is, Repository*& repos) {
+int InitRepos(fstream& is, Repository*& repos) {
   cout << "请输入仓库基本信息" << endl << endl;
   cout << "请输入仓库代码" << endl;
   int code;
@@ -65,7 +79,7 @@ int InitRepos(istream& is, Repository*& repos) {
   return 0;
 }
 
-int CreateRepos(ifstream& is, Repository*& repos) {
+int CreateRepos(fstream& is, Repository*& repos) {
   // exception here
   if (repos == NULL) {
     repos = new Repository;
@@ -104,8 +118,10 @@ int Destroyed(Repository*& repos) {
   return -1;
 }
 
-int Import(ifstream& is, Repository*& repos) {
+int Import(fstream& is, Repository*& repos) {
   // exceptions here;
+  if (!is.is_open()) return -1;
+  if (is.eof()) return -2;
   cout << "请输入商品唯一标识符" << endl;
   int code;
   is >> code;
@@ -113,7 +129,7 @@ int Import(ifstream& is, Repository*& repos) {
   if (newGoods->next == NULL || newGoods->next->code != code) {
     cout << "商品不存在，新建商品" << endl;
     newGoods = new GoodsType;
-    CreateGoods(code, newGoods);
+    CreateGoods(is, code, newGoods);
     InsertNewItems(repos->goodsList, newGoods);
 
   } else {
@@ -188,6 +204,22 @@ int CreateGoods(int code, GoodsType*& target) {
   cout << "请输入入库商品数量" << endl;
   int remainNumber;
   cin >> remainNumber;
+  InitGoods(target, code, name, remainNumber);
+  return 0;
+}
+
+int CreateGoods(fstream& is, int code, GoodsType*& target) {
+  // exceptions here;
+  //  cout << "商品标识码:  " << code << endl;
+  cout << "请输入商品基本信息" << endl;
+  cout << "请输入商品名称" << endl;
+  string name;
+  is.get();
+  getline(is, name);
+  // cout << "商品名称为:  " << name << endl;
+  cout << "请输入入库商品数量" << endl;
+  int remainNumber;
+  is >> remainNumber;
   InitGoods(target, code, name, remainNumber);
   return 0;
 }
