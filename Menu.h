@@ -5,10 +5,7 @@
 #include "Repository.hpp"
 // Member Functions
 
-fstream reposData("Data_repos.txt");
-fstream goodsData("Data_goods.txt");
-ofstream errLog("error.log");
-ofstream reposLog("repos.log");
+
 
 int MainMenu();
 int FileMenu();

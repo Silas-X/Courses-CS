@@ -11,16 +11,16 @@ using namespace std;
 
 // Repository Functions
 
-
 int ShowRepos(Repository*& repos) {
   if (repos == NULL) {
     cout << "无仓库" << endl;
     return -1;
   }
   Info reposInfo = repos->info;
-  cout << "仓库代码:  " << reposInfo.series << endl;
-  cout << "仓库名称:  " << reposInfo.name << endl;
-
+  cout << "仓库代码\t" << reposInfo.series << endl;
+  cout << "仓库名称\t " << reposInfo.name << endl;
+  cout << "仓库当前存储总量\t" << reposInfo.totalGoods << endl;
+  cout << "仓库最大容量\t" << reposInfo.maxGoods << endl;
   return 0;
 }
 
@@ -48,6 +48,7 @@ int InitRepos(istream& is, Repository*& repos) {
   repos->goodsList = new GoodsType;
   InitGoods(repos->goodsList, -1, "_RESERVED", 0);
   repos->next = NULL;
+  ShowRepos(repos);
   return 0;
 }
 
@@ -87,11 +88,18 @@ int Import(istream& is, Repository*& repos) {
   is >> code;
   GoodsType* newGoods = Find(code, repos->goodsList);
   if (newGoods->next == NULL || newGoods->next->code != code) {
+    if (isFull(repos)) {
+      cout << "商品入库失败,仓库已满" << endl;
+      return -1;
+    }
     cout << "商品不存在，新建商品" << endl;
     newGoods = new GoodsType;
-    CreateGoods(code, newGoods);
+    if (CreateGoods(code, newGoods) == -1) {
+      cout << "新建商品失败,商品数超出库容限制" << endl;
+      return -1;
+    }
     InsertNewItems(repos->goodsList, newGoods);
-
+    repos->info.totalGoods++;
   } else {
     newGoods = newGoods->next;
     cout << "商品已存在，信息如下" << endl;
@@ -131,17 +139,18 @@ int Export(Repository*& repos) {
 
 int CreateGoods(int code, GoodsType*& target) {
   // exceptions here;
-  //  cout << "商品标识码:  " << code << endl;
   cout << "请输入商品基本信息" << endl;
   cout << "请输入商品名称" << endl;
   string name;
   getchar();
   getline(cin, name);
-  // cout << "商品名称为:  " << name << endl;
   cout << "请输入入库商品数量" << endl;
+  InitGoods(target, code, name, 0);
   int remainNumber;
   cin >> remainNumber;
-  InitGoods(target, code, name, remainNumber);
+  if (IncreaseStorage(target, remainNumber) == -1) {
+    return -1;
+  };
   writeOffLog(reposLog, 1, target, 0);
   return 0;
 }
@@ -168,6 +177,10 @@ int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
 
 inline int IncreaseStorage(GoodsType*& target, int number) {
   // TODO::need Exception, in case of positive,and NULL
+  if (isFull(target, number)) {
+    cout << "商品入库失败，仓库库容不足" << endl;
+    return -1;
+  }
   writeOffLog(reposLog, 2, target, number);
   target->remainCount += number;
 

@@ -3,6 +3,14 @@
 #include <fstream>
 #include "Repository_Types.hpp"
 using namespace std;
+
+fstream reposData;
+fstream goodsData;
+ofstream errLog;
+ofstream reposLog;
+
+int backup();
+int ReadIn(Repository*& root);
 int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos);
 int InitRepos(fstream& is, Repository*& repos);
 int CreateRepos(fstream& is, Repository*& repos);

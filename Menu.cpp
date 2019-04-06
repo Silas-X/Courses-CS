@@ -8,32 +8,17 @@
 using namespace std;
 // Driven Menu
 
-// reposData.close();
-// ifstream reposData("Data_repos.txt");
-
 int MainMenu() {
   cout << "商品管理系统" << endl;
   int opt = 0;
-  // Company* rootCorp = new Company;
   Repository* root = NULL;
-  if (!reposData.is_open())
-    cout << "OpenFailed" << endl;
-  else
-    CreateRepos(reposData, root);
-  if (goodsData.is_open()) {
-    cout << "读取存档" << endl;
-    system("PAUSE");
-    while (Import(goodsData, root) == 0)
-      ;
-  } else {
-    cout << "Not Open" << endl;
-    system("PAUSE");
-  }
+  ReadIn(root);
   while (1) {
     ShowInstruments();
     cin >> opt;
     switch (opt) {
       case 0:
+        backup();
         writeOff(reposData, goodsData, root);
         ShowRepos(root);
         cout << "销毁仓库" << endl;  // TODO:深度销毁仓库
