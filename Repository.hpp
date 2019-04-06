@@ -1,42 +1,9 @@
 #ifndef Repository_HEADDER_INCLUDE
 #define Repository_HEADDER_INCLUDE
-//#include <fstream>
-#include <string>
+#include <iostream>
+#include "Repository_Types.hpp"
 using namespace std;
 
-struct ModifyRecords {
-  // date Info
-  int year;
-  int month;
-  int day;
-  bool status;  // true for in, and false for out
-  ModifyRecords* nextRecords;
-};
-
-struct GoodsType {
-  int code;         // Serial Numbers,eg
-  string name;      // goods Name;
-  int remainCount;  // status of a goods
-  GoodsType* next;
-};
-
-struct UsersType {};
-
-struct Info {
-  string name;
-  int series;
-};
-struct Repository {
-  Info info;
-  GoodsType* goodsList;
-  Repository* next;
-  // struct UsersType* usersList;
-};
-
-struct Company {
-  Repository* reposList;
-  int totalNums;
-};
 int ShowRepos(Repository*& repos);
 int InitRepos(istream& is, Repository*& repos);
 int CreateRepos(istream& is, Repository*& repos);

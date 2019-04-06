@@ -10,28 +10,7 @@
 using namespace std;
 
 // Repository Functions
-int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
-  if (repos == NULL) return -1;
-  cout << "Ð´³öÊý¾Ý" << endl;
-  reposData.close();
-  goodsData.close();
-  reposData.open("Data_repos.txt", ios_base::out);
-  goodsData.open("Data_goods.txt", ios_base::out);
-  if (!reposData.is_open()) {
-    cout << "repos open failed";
-  }
-  if (!goodsData.is_open()) {
-    cout << "goods open failed";
-  }
-  reposData << repos->info.series << endl;
-  reposData << repos->info.name << endl;
-  GoodsType* p = repos->goodsList->next;
-  while (p != NULL) {
-    goodsData << p->code << endl << p->name << endl << p->remainCount << endl;
-    p = p->next;
-  }
-  return 0;
-}
+
 
 int ShowRepos(Repository*& repos) {
   if (repos == NULL) {
