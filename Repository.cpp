@@ -222,6 +222,16 @@ int ShowInfo(GoodsType*& target) {
   return 0;
 }
 
+int ShowAllGoods(Repository*& repos) {
+  GoodsType* p = repos->goodsList->next;
+  while (p != NULL) {
+    ShowInfo(p);
+    cout << endl;
+    p = p->next;
+  }
+  return 0;
+}
+
 GoodsType* Find(int target, GoodsType*& goodsHead) {
   GoodsType *q = goodsHead, *p = q->next;
   while (p != NULL && p->code != target) {

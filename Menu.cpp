@@ -13,28 +13,33 @@ int MainMenu() {
   int opt = 0;
   Repository* root = NULL;
   ReadIn(root);
-  while (1) {
+  bool flag = true;
+  while (flag) {
+    system("cls");
     ShowInstruments();
-    cin >> opt;
+    string str;
+    cin >> str;
+    int opt = str2num(str);
     switch (opt) {
       case 0:
         backup();
         writeOff(reposData, goodsData, root);
         ShowRepos(root);
-        cout << "销毁仓库" << endl;  // TODO:深度销毁仓库
+        cout << "销毁内存仓库" << endl;  // TODO:深度销毁仓库
         Destroyed(root);
-        system("PAUSE");
-        return 0;
+        flag = false;
+        break;
       case 1:
         cout << "创建仓库" << endl;
+        if (root != NULL) {
+          cout << "抱歉，当前版本仅支持单仓库管理，请等待后续更新" << endl;
+          break;
+        }
         CreateRepos(cin, root);
-        ShowRepos(root);
-        system("PAUSE");
         break;
       case 2:
         cout << "查看当前仓库信息" << endl;
         ShowRepos(root);
-        system("PAUSE");
         break;
       case 3:
         cout << "选择仓库进行管理" << endl;
@@ -42,18 +47,20 @@ int MainMenu() {
         ReposMenu(root);
         break;
       default:
+        cout << "输入错误，请重新选择" << endl;
         break;
     }
+    system("PAUSE");
   }
   return 1;
 }
-
+/*
 int ReposMenu(Repository*& repos) {
   if (repos == NULL) {
     cout << "仓库不存在" << endl;
     return -1;
   }
-  cout << "欢迎！当前仓库为" << endl;
+  cout << "欢迎！当前操作仓库为" << endl;
   ShowRepos(repos);
   cout << "请选择将要执行的操作" << endl;
   int opt;
@@ -69,7 +76,7 @@ int ReposMenu(Repository*& repos) {
         system("Pause");
         return 0;
       case 1:
-        cout << "添加货物" << endl;
+        cout << "入货" << endl;
         Import(cin, repos);
         system("PAUSE");
         break;
@@ -81,21 +88,91 @@ int ReposMenu(Repository*& repos) {
         break;
       case 3:
         cout << "显示全部商品信息" << endl;
-        p = repos->goodsList->next;
-        while (p != NULL) {
-          ShowInfo(p);
-          cout << endl;
-          p = p->next;
-        }
+        ShowAllGoods(repos);
         system("PAUSE");
         break;
+      case 4:
+        cout << "查询与修改信息" << endl;
+        SearchMenu(repos);
+        system("PAUSE");
       default:
         break;
     }
   }
   return 0;
 }
+*/
+int ReposMenu(Repository*& repos) {
+  if (repos == NULL) {
+    cout << "仓库不存在,请先创建仓库" << endl;
+    return -1;
+  }
+  string str;
+  int opt;
+  int flag = true;
+  while (flag) {
+    system("cls");
+    cout << "欢迎！当前操作仓库为" << endl;
+    ShowRepos(repos);
+    cout << "请选择将要执行的操作" << endl;
+    ShowReposInstruments();
+    cin >> str;
+    opt = str2num(str);
+    switch (opt) {
+      case 0:
+        ShowRepos(repos);
+        cout << "退出仓库" << endl;
+        flag = false;
+        break;
+      case 1:
+        cout << "新建商品" << endl;
+        Import(cin, repos);
+        break;
+      case 2:
+        cout << "查询与修改" << endl;
+        SearchMenu(repos);
+        break;
+      default:
+        cout << "输入错误，请重新选择" << endl;
+        break;
+    }
+    system("PAUSE");
+  }
+  return 0;
+}
+int SearchMenu(Repository*& repos) {
+  bool flag = true;
+  while (flag) {
+    system("cls");
+    ShowSearchInstruments();
+    string str;
+    cin >> str;
+    int opt = str2num(str);
+    switch (opt) {
+      case 0:
+        cout << "返回上级菜单" << endl;
+        flag = false;
+        break;
+      case 1:
+        ShowAllGoods(repos);
+        break;
+      case 2:
+        // SearchFor(repos);
+      default:
+        cout << "输入错误，请重新选择" << endl;
+        break;
+    }
+    system("PAUSE");
+  }
+  return -1;
+}
 
+int str2num(string str) {
+  for (int i = 0; i < str.size(); i++) {
+    if (str[i] < '0' || str[i] > '9') return -1;
+  }
+  return stoi(str);  // The c++11 Standard Function string to number;
+}
 void ShowInstruments() {
   cout << "说明" << endl;
   cout << "请输入序号选择您所需要的操作" << endl;
@@ -107,9 +184,26 @@ void ShowInstruments() {
 void ShowReposInstruments() {
   cout << "说明" << endl;
   cout << "请输入序号选择您所需要的操作" << endl;
-  cout << "1.  入货" << endl;
-  cout << "2.  出货" << endl;
-  cout << "3.  查看当前货物状态 " << endl;
+  cout << "1.  新建商品" << endl;
+  cout << "2.  查询与修改" << endl;
   cout << "输入0以退出" << endl;
 }
+
+void ShowSearchInstruments() {
+  cout << "说明" << endl;
+  cout << "请输入序号选择您所需要的操作" << endl;
+  cout << "1.  显示全部货物信息" << endl;
+  cout << "2.  查询指定货物信息" << endl;
+  cout << "输入0以返回" << endl;
+}
+
+void ShowModifyInstruments() {
+  cout << "说明" << endl;
+  cout << "请输入序号选择您所需要的操作" << endl;
+  cout << "1.  入库" << endl;
+  cout << "2.  出库" << endl;
+  cout << "3. 修改该货物信息" << endl;
+  cout << "输入0以退出" << endl;
+}
+
 #endif

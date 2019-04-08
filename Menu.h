@@ -5,15 +5,16 @@
 #include "Repository.hpp"
 // Member Functions
 
-
-
 int MainMenu();
 int FileMenu();
 int ReposMenu(Repository*& repos);
+int SearchMenu(Repository*& repos);
 
 // Auxiliary Functions
 void ShowInstruments();
 
 void ShowReposInstruments();
-
+void ShowSearchInstruments();
+void ShowModifyInstruments();
+int str2num(string str);
 #endif
