@@ -124,7 +124,7 @@ int SearchMenu(Repository*& repos) {
     }
     system("PAUSE");
   }
-  return -1;
+  return 0;
 }
 
 int ModifyMenu(Repository*& repos, GoodsType*& preGoods, GoodsType*& goods) {
@@ -146,27 +146,33 @@ int ModifyMenu(Repository*& repos, GoodsType*& preGoods, GoodsType*& goods) {
       case 1: {
         cout << "请输入入库数量" << endl;
         int nums;
-        cin >> nums;
+        readInNum(nums);
         IncreaseStorage(goods, nums);
       } break;
       case 2: {
         cout << "请输入出库数量" << endl;
         int nums;
-        cin >> nums;
+        readInNum(nums);
         DecreaseStorage(goods, nums);
-        if (goods->remainCount == 0)
+        if (goods->remainCount == 0) {
           RemoveGoods(preGoods, goods);
-        else
+          flag = false;
+        } else
           ShowInfo(goods);
       } break;
       case 3:
         GoodsInfoMenu(repos, goods);
+        if (goods != NULL && goods->remainCount == 0) {
+          cout << "库存为0,删除商品记录" << endl;
+          RemoveGoods(preGoods, goods);
+          flag = false;
+        }
         break;
       default:
         cout << "输入错误，请重新选择" << endl;
         break;
     }
-    if (goods->remainCount == 0) RemoveGoods(preGoods, goods);
+
     system("PAUSE");
   }
   return 0;
