@@ -14,6 +14,7 @@ int UpdateInfo();
 int InitGoods(GoodsType*& target, int code, string name, int remainNumber);
 int CreateGoods(int code, GoodsType*& target);
 int RemoveGoods(GoodsType*& pre, GoodsType*& target);
+int SearchFor(Repository*& repos, GoodsType*& target);
 inline int IncreaseStorage(GoodsType*& target, int number);
 inline int DecreaseStorage(GoodsType*& target, int number);
 inline int ChangeStorage(GoodsType*& target, int number);

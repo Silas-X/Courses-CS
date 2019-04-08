@@ -173,6 +173,24 @@ int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
   return 0;
 }
 
+int SearchFor(Repository*& repos, GoodsType*& target) {
+  cout << "请输入查询商品代号" << endl;
+  string str;
+  cin >> str;
+  int code = str2num(str);
+  while (code == -1) {
+    cout << "输入错误，请重新输入" << endl;
+    cin >> str;
+    code = str2num(str);
+    cout<<"code current is "<<code<<endl;
+  }
+  GoodsType* newGoods = Find(code, repos->goodsList);
+  if (newGoods->next == NULL || newGoods->next->code != code)
+    target = NULL;
+  else
+    target = newGoods;
+  return 0;
+}
 // Goods Functions
 
 inline int IncreaseStorage(GoodsType*& target, int number) {
@@ -224,6 +242,9 @@ int ShowInfo(GoodsType*& target) {
 
 int ShowAllGoods(Repository*& repos) {
   GoodsType* p = repos->goodsList->next;
+  if (p == NULL) {
+    cout << "当前无商品" << endl;
+  }
   while (p != NULL) {
     ShowInfo(p);
     cout << endl;

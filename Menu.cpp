@@ -54,54 +54,7 @@ int MainMenu() {
   }
   return 1;
 }
-/*
-int ReposMenu(Repository*& repos) {
-  if (repos == NULL) {
-    cout << "仓库不存在" << endl;
-    return -1;
-  }
-  cout << "欢迎！当前操作仓库为" << endl;
-  ShowRepos(repos);
-  cout << "请选择将要执行的操作" << endl;
-  int opt;
-  while (1) {
-    system("cls");
-    ShowReposInstruments();
-    cin >> opt;
-    GoodsType* p = NULL;
-    switch (opt) {
-      case 0:
-        ShowRepos(repos);
-        cout << "退出仓库" << endl;
-        system("Pause");
-        return 0;
-      case 1:
-        cout << "入货" << endl;
-        Import(cin, repos);
-        system("PAUSE");
-        break;
-      case 2:
-        cout << "出货" << endl;
-        // cout << "TODO in progress" << endl;  // TODO: 出货函数
-        Export(repos);
-        system("PAUSE");
-        break;
-      case 3:
-        cout << "显示全部商品信息" << endl;
-        ShowAllGoods(repos);
-        system("PAUSE");
-        break;
-      case 4:
-        cout << "查询与修改信息" << endl;
-        SearchMenu(repos);
-        system("PAUSE");
-      default:
-        break;
-    }
-  }
-  return 0;
-}
-*/
+
 int ReposMenu(Repository*& repos) {
   if (repos == NULL) {
     cout << "仓库不存在,请先创建仓库" << endl;
@@ -147,6 +100,7 @@ int SearchMenu(Repository*& repos) {
     ShowSearchInstruments();
     string str;
     cin >> str;
+    GoodsType* preGoods = NULL;
     int opt = str2num(str);
     switch (opt) {
       case 0:
@@ -157,7 +111,11 @@ int SearchMenu(Repository*& repos) {
         ShowAllGoods(repos);
         break;
       case 2:
-        // SearchFor(repos);
+        SearchFor(repos, preGoods);
+        if (preGoods == NULL) {
+          cout << "不存在该商品" << endl;
+        }
+        ModifyMenu(preGoods, preGoods->next);
       default:
         cout << "输入错误，请重新选择" << endl;
         break;
@@ -165,6 +123,49 @@ int SearchMenu(Repository*& repos) {
     system("PAUSE");
   }
   return -1;
+}
+
+int ModifyMenu(GoodsType*& preGoods, GoodsType*& goods) {
+  bool flag = true;
+  while (flag) {
+    system("cls");
+    cout << "当前选择商品" << endl;
+    ShowInfo(goods);
+    cout << endl;
+    ShowModifyInstruments();
+    string str;
+    cin >> str;
+    int opt = str2num(str);
+    switch (opt) {
+      case 0:
+        cout << "返回上级目录" << endl;
+        flag = false;
+        break;
+      case 1: {
+        cout << "请输入入库数量" << endl;
+        int nums;
+        cin >> nums;
+        IncreaseStorage(goods, nums);
+      } break;
+      case 2: {
+        cout << "请输入出库数量" << endl;
+        int nums;
+        cin >> nums;
+        DecreaseStorage(goods, nums);
+        if (goods->remainCount == 0)
+          RemoveGoods(preGoods, goods);
+        else
+          ShowInfo(goods);
+      } break;
+      case 3:
+        // GoodsInfoMenu();
+      default:
+        cout << "输入错误，请重新选择" << endl;
+        break;
+    }
+    system("PAUSE");
+  }
+  return 0;
 }
 
 int str2num(string str) {
