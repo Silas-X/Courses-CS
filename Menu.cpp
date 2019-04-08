@@ -38,12 +38,11 @@ int MainMenu() {
         CreateRepos(cin, root);
         break;
       case 2:
-        cout << "查看当前仓库信息" << endl;
-        ShowRepos(root);
+        cout << "查看与修改当前仓库信息" << endl;
+        ReposManageMenu(root);
         break;
       case 3:
         cout << "选择仓库进行管理" << endl;
-        ShowRepos(root);
         ReposMenu(root);
         break;
       default:
@@ -55,13 +54,51 @@ int MainMenu() {
   return 1;
 }
 
+int ReposManageMenu(Repository*& repos) {
+  if (repos == NULL) {
+    cout << "仓库不存在,请先创建仓库" << endl;
+    return -1;
+  }
+  int flag = true;
+  while (flag) {
+    system("cls");
+    cout << "欢迎！当前操作仓库为" << endl;
+    ShowRepos(repos);
+    cout << "请选择将要执行的操作" << endl;
+    ShowReposManageInstruments();
+    int opt;
+    readInNum(opt);
+    switch (opt) {
+      case 0:
+        cout << "返回上级菜单" << endl;
+        flag = false;
+        break;
+      case 1: {
+        cout << "修改仓库代号" << endl;
+        int code;
+        readInNum(code);
+        ChangeReposCode(repos, code);
+      } break;
+      case 2: {
+        cout << "修改仓库名称" << endl;
+        string name;
+        getchar();
+        getline(cin, name);
+        ChangeReposName(repos, name);
+      } break;
+      default:
+        cout << "输入错误，请重新选择" << endl;
+        break;
+    }
+    system("PAUSE");
+  }
+  return 0;
+}
 int ReposMenu(Repository*& repos) {
   if (repos == NULL) {
     cout << "仓库不存在,请先创建仓库" << endl;
     return -1;
   }
-  string str;
-  int opt;
   int flag = true;
   while (flag) {
     system("cls");
@@ -69,8 +106,8 @@ int ReposMenu(Repository*& repos) {
     ShowRepos(repos);
     cout << "请选择将要执行的操作" << endl;
     ShowReposInstruments();
-    cin >> str;
-    opt = str2num(str);
+    int opt;
+    readInNum(opt);
     switch (opt) {
       case 0:
         ShowRepos(repos);
@@ -156,6 +193,7 @@ int ModifyMenu(Repository*& repos, GoodsType*& preGoods, GoodsType*& goods) {
         DecreaseStorage(goods, nums);
         if (goods->remainCount == 0) {
           RemoveGoods(preGoods, goods);
+          repos->info.totalGoods--;
           flag = false;
         } else
           ShowInfo(goods);
@@ -165,6 +203,7 @@ int ModifyMenu(Repository*& repos, GoodsType*& preGoods, GoodsType*& goods) {
         if (goods != NULL && goods->remainCount == 0) {
           cout << "库存为0,删除商品记录" << endl;
           RemoveGoods(preGoods, goods);
+          repos->info.totalGoods--;
           flag = false;
         }
         break;
@@ -234,6 +273,13 @@ void ShowInstruments() {
   cout << "1.  创建仓库" << endl;
   cout << "2.  查看当前仓库信息" << endl;
   cout << "3.  选择仓库 " << endl;
+  cout << "输入0以退出" << endl;
+}
+void ShowReposManageInstruments() {
+  cout << "说明" << endl;
+  cout << "请输入序号选择您所需要的操作" << endl;
+  cout << "1.  修改仓库代号" << endl;
+  cout << "2.  修改仓库名称" << endl;
   cout << "输入0以退出" << endl;
 }
 void ShowReposInstruments() {

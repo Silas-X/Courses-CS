@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
 #include "Repository_FILE.cpp"
 #include "Repository_FILE.hpp"
 using namespace std;
@@ -129,9 +130,10 @@ int Export(Repository*& repos) {
     readInNum(nums);
     DecreaseStorage(newGoods->next, nums);
 
-    if (newGoods->next->remainCount == 0)
+    if (newGoods->next->remainCount == 0) {
       RemoveGoods(newGoods, newGoods->next);
-    else
+      repos->info.totalGoods--;
+    } else
       ShowInfo(newGoods->next);
   }
   return 0;
@@ -175,15 +177,6 @@ int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
 
 int SearchFor(Repository*& repos, GoodsType*& target) {
   cout << "请输入查询商品代号" << endl;
-  /*string str;
-  cin >> str;
-  int code = str2num(str);
-  while (code == -1) {
-    cout << "输入错误，请重新输入" << endl;
-    cin >> str;
-    code = str2num(str);
-    cout << "code current is " << code << endl;
-  }*/
   int code;
   readInNum(code);
   GoodsType* newGoods = Find(code, repos->goodsList);
@@ -227,6 +220,7 @@ inline int ChangeStorage(GoodsType*& target, int number) {
 }
 
 inline int ChangeGoodsName(GoodsType*& target, const string name) {
+  writeOffLog(reposLog, 4, target, 0, name, 0);
   target->name = name;
   cout << "成功修改" << endl;
   return 0;
@@ -236,16 +230,28 @@ inline int ChangeGoodsCode(GoodsType*& goodsHead, GoodsType*& target,
                            const int code) {
   GoodsType* newGoods = Find(code, goodsHead);
   if (newGoods->next == NULL || newGoods->next->code != code) {
+    writeOffLog(reposLog, 3, target, 0, "", 0);
     target->code = code;
     cout << "成功修改" << endl;
-    // TODO:writeoff Log info
     return 0;
   }
   cout << "存在重复，修改失败,信息如下" << endl;
   ShowInfo(newGoods->next);
   return -1;
 }
+inline int ChangeReposName(Repository*& target, const string name) {
+  writeOffLog(reposLog, 5, NULL, 0, name, 0, target);
+  target->info.name = name;
+  cout << "成功修改" << endl;
+  return 0;
+}
 
+inline int ChangeReposCode(Repository*& target, const int code) {
+  writeOffLog(reposLog, 5, NULL, 0, "", code, target);
+  target->info.series = code;
+  cout << "成功修改" << endl;
+  return 0;
+}
 int ShowInfo(GoodsType*& target) {
   cout << "商品标识码" << target->code << endl;
   cout << "商品名称  " << target->name << endl;

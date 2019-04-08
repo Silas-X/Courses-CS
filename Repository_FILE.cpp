@@ -1,6 +1,7 @@
 #ifndef REPOS_FILL_CPP
 #define REPOS_FILL_CPP
 #include "Repository_FILE.hpp"
+#include <ctime>
 #include <iostream>
 #include <string>
 #include "Repository.hpp"
@@ -53,6 +54,11 @@ int ShowInfo_FILE(ofstream& reposLog, GoodsType*& target) {
   reposLog << "商品当前库容\t" << target->remainCount << "\t";
   return 0;
 }
+int ShowInfo_FILE(ofstream& reposLog, Repository*& target) {
+  reposLog << "仓库代码\t" << target->info.series << "\t";
+  reposLog << "仓库名称\t" << target->info.name << "\t";
+  return 0;
+}
 
 int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
   if (repos == NULL) return -1;
@@ -77,14 +83,17 @@ int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
   return 0;
 }
 
-int writeOffLog(ofstream& reposLog, int opt, GoodsType*& target,
-                int changes = 0) {
+int writeOffLog(ofstream& reposLog, const int opt, GoodsType* target = NULL,
+                int changes = 0, string name = "", int code = -1,
+                Repository* repos = NULL) {
   reposLog.close();
   reposLog.open("repos.log", ios_base::app);
-  if (target == NULL) {
+  /*if (target == NULL) {
     cout << "Error" << endl;
     system("PAUSE");
-  }
+  }*/
+  time_t currentTime = time(NULL);
+  reposLog << asctime(localtime(&currentTime)) << "\t";
   switch (opt) {
     case 0:
       reposLog << "删除商品记录\t";
@@ -100,7 +109,24 @@ int writeOffLog(ofstream& reposLog, int opt, GoodsType*& target,
       reposLog << "库存变更为" << target->remainCount + changes << "\t";
       break;
     case 3:
-
+      reposLog << "变更商品代号\t";
+      ShowInfo_FILE(reposLog, target);
+      reposLog << "代号变更为" << code << "\t";
+      break;
+    case 4:
+      reposLog << "变更商品名称\t";
+      ShowInfo_FILE(reposLog, target);
+      reposLog << "名称变更为" << name << "\t";
+      break;
+    case 5:
+      reposLog << "变更仓库代号\t";
+      ShowInfo_FILE(reposLog, repos);
+      reposLog << "代号变更为" << code << "\t";
+      break;
+    case 6:
+      reposLog << "变更仓库名称\t";
+      ShowInfo_FILE(reposLog, repos);
+      reposLog << "名称变更为" << name << "\t";
       break;
   }
   reposLog << endl;

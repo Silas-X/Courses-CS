@@ -16,4 +16,8 @@ int InitRepos(fstream& is, Repository*& repos);
 int CreateRepos(fstream& is, Repository*& repos);
 int Import(fstream& is, Repository*& repos);
 int CreateGoods(fstream& is, int code, GoodsType*& target);
+
+// auxilary functions;
+int ShowInfo_FILE(ofstream& reposLog, GoodsType*& target);
+int ShowInfo_FILE(ofstream& reposLog, Repository*& target);
 #endif
