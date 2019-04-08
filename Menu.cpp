@@ -114,8 +114,10 @@ int SearchMenu(Repository*& repos) {
         SearchFor(repos, preGoods);
         if (preGoods == NULL) {
           cout << "不存在该商品" << endl;
+          break;
         }
-        ModifyMenu(preGoods, preGoods->next);
+        ModifyMenu(repos, preGoods, preGoods->next);
+        break;
       default:
         cout << "输入错误，请重新选择" << endl;
         break;
@@ -125,7 +127,7 @@ int SearchMenu(Repository*& repos) {
   return -1;
 }
 
-int ModifyMenu(GoodsType*& preGoods, GoodsType*& goods) {
+int ModifyMenu(Repository*& repos, GoodsType*& preGoods, GoodsType*& goods) {
   bool flag = true;
   while (flag) {
     system("cls");
@@ -158,7 +160,53 @@ int ModifyMenu(GoodsType*& preGoods, GoodsType*& goods) {
           ShowInfo(goods);
       } break;
       case 3:
-        // GoodsInfoMenu();
+        GoodsInfoMenu(repos, goods);
+        break;
+      default:
+        cout << "输入错误，请重新选择" << endl;
+        break;
+    }
+    if (goods->remainCount == 0) RemoveGoods(preGoods, goods);
+    system("PAUSE");
+  }
+  return 0;
+}
+
+int GoodsInfoMenu(Repository*& repos, GoodsType*& goods) {
+  bool flag = true;
+  while (flag) {
+    system("cls");
+    cout << "当前选择商品" << endl;
+    ShowInfo(goods);
+    cout << endl;
+    ShowGoodsInstruments();
+    string str;
+    cin >> str;
+    int opt = str2num(str);
+    switch (opt) {
+      case 0:
+        cout << "返回上级目录" << endl;
+        flag = false;
+        break;
+      case 1: {
+        cout << "请输入新的代号" << endl;
+        int code;
+        readInNum(code);
+        ChangeGoodsCode(repos->goodsList, goods, code);
+      } break;
+      case 2: {
+        cout << "请输入新商品名" << endl;
+        string name;
+        getchar();
+        getline(cin, name);
+        ChangeGoodsName(goods, name);
+      } break;
+      case 3:
+        cout << "请输入新的存储量" << endl;
+        int remain;
+        readInNum(remain);
+        ChangeStorage(goods, remain);
+        break;
       default:
         cout << "输入错误，请重新选择" << endl;
         break;
@@ -207,4 +255,12 @@ void ShowModifyInstruments() {
   cout << "输入0以退出" << endl;
 }
 
+void ShowGoodsInstruments() {
+  cout << "说明" << endl;
+  cout << "请输入序号选择您所需要的操作" << endl;
+  cout << "1.  修改代号" << endl;
+  cout << "2.  修改商品名" << endl;
+  cout << "3.  修改商品存储量" << endl;
+  cout << "输入0以退出" << endl;
+}
 #endif

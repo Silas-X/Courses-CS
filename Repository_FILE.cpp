@@ -48,9 +48,9 @@ int ReadIn(Repository*& root) {
   return 0;
 }
 int ShowInfo_FILE(ofstream& reposLog, GoodsType*& target) {
-  reposLog << "仓库代码\t" << target->code << "\t";
-  reposLog << "仓库名称\t" << target->name << "\t";
-  reposLog << "仓库当前库容\t" << target->remainCount << "\t";
+  reposLog << "商品代码\t" << target->code << "\t";
+  reposLog << "商品名称\t" << target->name << "\t";
+  reposLog << "商品当前库容\t" << target->remainCount << "\t";
   return 0;
 }
 

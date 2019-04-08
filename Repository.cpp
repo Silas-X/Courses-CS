@@ -36,7 +36,7 @@ int InitRepos(istream& is, Repository*& repos) {
   cout << "请输入仓库基本信息" << endl << endl;
   cout << "请输入仓库代码" << endl;
   int code;
-  is >> code;
+  readInNum(code);
   repos->info.series = code;
   cout << "请输入仓库名称" << endl;
   string name;
@@ -85,7 +85,7 @@ int Import(istream& is, Repository*& repos) {
   // exceptions here;
   cout << "请输入商品唯一标识符" << endl;
   int code;
-  is >> code;
+  readInNum(code);
   GoodsType* newGoods = Find(code, repos->goodsList);
   if (newGoods->next == NULL || newGoods->next->code != code) {
     if (isFull(repos)) {
@@ -116,7 +116,7 @@ int Import(istream& is, Repository*& repos) {
 int Export(Repository*& repos) {
   cout << "请输入商品唯一标识符" << endl;
   int code;
-  cin >> code;
+  readInNum(code);
   GoodsType* newGoods = Find(code, repos->goodsList);
   if (newGoods->next == NULL || newGoods->next->code != code) {
     cout << "商品不存在，请确认" << endl;
@@ -126,7 +126,7 @@ int Export(Repository*& repos) {
     ShowInfo(newGoods->next);
     cout << "请输入出库数量" << endl;
     int nums;
-    cin >> nums;
+    readInNum(nums);
     DecreaseStorage(newGoods->next, nums);
 
     if (newGoods->next->remainCount == 0)
@@ -147,7 +147,7 @@ int CreateGoods(int code, GoodsType*& target) {
   cout << "请输入入库商品数量" << endl;
   InitGoods(target, code, name, 0);
   int remainNumber;
-  cin >> remainNumber;
+  readInNum(remainNumber);
   if (IncreaseStorage(target, remainNumber) == -1) {
     return -1;
   };
@@ -175,15 +175,17 @@ int InsertNewItems(GoodsType*& head, GoodsType*& goods) {
 
 int SearchFor(Repository*& repos, GoodsType*& target) {
   cout << "请输入查询商品代号" << endl;
-  string str;
+  /*string str;
   cin >> str;
   int code = str2num(str);
   while (code == -1) {
     cout << "输入错误，请重新输入" << endl;
     cin >> str;
     code = str2num(str);
-    cout<<"code current is "<<code<<endl;
-  }
+    cout << "code current is " << code << endl;
+  }*/
+  int code;
+  readInNum(code);
   GoodsType* newGoods = Find(code, repos->goodsList);
   if (newGoods->next == NULL || newGoods->next->code != code)
     target = NULL;
@@ -220,17 +222,28 @@ inline int ChangeStorage(GoodsType*& target, int number) {
   // TODO::need Exception, in case of non-positive,and NULL
   writeOffLog(reposLog, 2, target, target->remainCount - number);
   target->remainCount = number;
+  cout << "成功修改" << endl;
   return 0;
 }
 
 inline int ChangeGoodsName(GoodsType*& target, const string name) {
   target->name = name;
+  cout << "成功修改" << endl;
   return 0;
 }
 
-inline int ChangeGoodsCode(GoodsType*& target, const int code) {
-  target->code = code;
-  return 0;
+inline int ChangeGoodsCode(GoodsType*& goodsHead, GoodsType*& target,
+                           const int code) {
+  GoodsType* newGoods = Find(code, goodsHead);
+  if (newGoods->next == NULL || newGoods->next->code != code) {
+    target->code = code;
+    cout << "成功修改" << endl;
+    // TODO:writeoff Log info
+    return 0;
+  }
+  cout << "存在重复，修改失败,信息如下" << endl;
+  ShowInfo(newGoods->next);
+  return -1;
 }
 
 int ShowInfo(GoodsType*& target) {
@@ -260,5 +273,17 @@ GoodsType* Find(int target, GoodsType*& goodsHead) {
     p = p->next;
   }
   return q;
+}
+
+int readInNum(int& x) {
+  string str;
+  cin >> str;
+  x = str2num(str);
+  while (x == -1) {
+    cout << "输入有误，请重新输入，仅接受数字" << endl;
+    cin >> str;
+    x = str2num(str);
+  }
+  return 0;
 }
 #endif

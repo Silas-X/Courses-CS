@@ -19,10 +19,12 @@ inline int IncreaseStorage(GoodsType*& target, int number);
 inline int DecreaseStorage(GoodsType*& target, int number);
 inline int ChangeStorage(GoodsType*& target, int number);
 inline int ChangeGoodsName(GoodsType*& target, const string name);
-inline int ChangeGoodsCode(GoodsType*& target, const int code);
+inline int ChangeGoodsCode(GoodsType*& goodsHead, GoodsType*& target,
+                           const int code);
 int ShowInfo(GoodsType*& target);
 int ShowAllGoods(Repository*& repos);
 int InsertNewItems(GoodsType*& head, GoodsType*& goods);
 GoodsType* Find(int target, GoodsType*& goodsHead);
+int readInNum(int& x);
 
 #endif  // Repository_HEADDER_INCLUDE
