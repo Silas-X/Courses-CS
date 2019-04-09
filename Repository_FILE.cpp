@@ -83,9 +83,8 @@ int writeOff(fstream& reposData, fstream& goodsData, Repository*& repos) {
   return 0;
 }
 
-int writeOffLog(ofstream& reposLog, const int opt, GoodsType* target = NULL,
-                int changes = 0, string name = "", int code = -1,
-                Repository* repos = NULL) {
+int writeOffLog(ofstream& reposLog, const int opt, GoodsType* target,
+                int changes, string name, int code, Repository* repos) {
   reposLog.close();
   reposLog.open("repos.log", ios_base::app);
   /*if (target == NULL) {
@@ -143,7 +142,7 @@ int InitRepos(fstream& is, Repository*& repos) {
   repos->info.name = name;
   repos->goodsList = new GoodsType;
   InitGoods(repos->goodsList, -1, "_RESERVED", 0);
-  //repos->next = NULL;
+  // repos->next = NULL;
   return 0;
 }
 
