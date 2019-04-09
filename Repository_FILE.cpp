@@ -143,7 +143,7 @@ int InitRepos(fstream& is, Repository*& repos) {
   repos->info.name = name;
   repos->goodsList = new GoodsType;
   InitGoods(repos->goodsList, -1, "_RESERVED", 0);
-  repos->next = NULL;
+  //repos->next = NULL;
   return 0;
 }
 

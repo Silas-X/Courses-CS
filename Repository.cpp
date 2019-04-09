@@ -48,7 +48,7 @@ int InitRepos(istream& is, Repository*& repos) {
   repos->info.name = name;
   repos->goodsList = new GoodsType;
   InitGoods(repos->goodsList, -1, "_RESERVED", 0);
-  repos->next = NULL;
+  //repos->next = NULL;
   ShowRepos(repos);
   return 0;
 }

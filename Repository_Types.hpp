@@ -2,42 +2,26 @@
 #define REPOS_TYPE_HPP
 #include <string>
 using std::string;
-
-struct ModifyRecords {
-  // date Info
-  int year;
-  int month;
-  int day;
-  bool status;  // true for in, and false for out
-  ModifyRecords* nextRecords;
-};
-
+//商品信息
 struct GoodsType {
-  int code;            // Serial Numbers,eg
-  string name{""};     // goods Name;
-  int remainCount{0};  // status of a goods
-  const int maxNumber{1000};
-  GoodsType* next;
+  int code;                   // 商品序列号，不允许重复
+  string name{""};            // 商品名称，允许重复
+  int remainCount{0};         // 商品库存量
+  const int maxNumber{1000};  //商品最大允许库存量
+  GoodsType* next;            //链表指针
 };
 
-struct UsersType {};
-
+//仓库信息
 struct Info {
   string name;
   int series;
   const int maxGoods{1000};
   int totalGoods{0};
 };
-struct Repository {
-  Info info;
-  GoodsType* goodsList;
-  Repository* next;
-  // struct UsersType* usersList;
-};
 
-struct Company {
-  Repository* reposList;
-  int totalNums;
+struct Repository {
+  Info info;                 //仓库基本信息
+  GoodsType* goodsList;      //仓库商品表
 };
 
 inline bool isFull(Repository*& repos) {
