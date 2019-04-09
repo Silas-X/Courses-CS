@@ -13,10 +13,10 @@ struct GoodsType {
 
 //仓库信息
 struct Info {
-  string name;
-  int series;
-  const int maxGoods{1000};
-  int totalGoods{0};
+  string name;                //仓库名称
+  int series;                 //仓库序号，在多仓库版本中使用
+  const int maxGoods{1000};   //仓库最大商品条目
+  int totalGoods{0};          //仓库当前商品条目
 };
 
 struct Repository {
